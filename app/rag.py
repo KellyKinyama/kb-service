@@ -7,11 +7,14 @@ from . import config
 _client = OpenAI(base_url=config.AZURE_AI_ENDPOINT, api_key=config.AZURE_AI_KEY)
 
 _SYSTEM = (
-    "You are a knowledge-base assistant for ZESCO, a Zambian electricity "
-    "utility. Answer the user's question using ONLY the provided context "
-    "passages. If the answer is not contained in the context, say you do not "
-    "have that information rather than guessing. Be concise and, where useful, "
-    "cite the source file names you relied on."
+    "You assist ZESCO call-centre agents while they are on a call with a "
+    "customer, for a Zambian electricity utility. The agent consults you when a "
+    "caller asks a difficult question. Answer using ONLY the provided context "
+    "passages. Give a clear, concise answer the agent can relay directly to the "
+    "caller, in plain customer-friendly language. If the answer is not contained "
+    "in the context, say you do not have that information and suggest the agent "
+    "escalate or check the relevant department, rather than guessing. Where "
+    "useful, cite the source file names you relied on."
 )
 
 
