@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+kb_data/
+
+ingest_out.txt
