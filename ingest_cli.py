@@ -8,7 +8,7 @@ import os
 import sys
 
 from app import chunking, config, loaders
-from app.store import VectorStore
+from app.store_factory import make_store
 
 
 def main() -> None:
@@ -20,7 +20,7 @@ def main() -> None:
     if not os.path.exists(target):
         sys.exit(f"Path not found: {target}")
 
-    store = VectorStore(config.DATA_DIR, config.EMBED_MODEL)
+    store = make_store()
     files = [target] if os.path.isfile(target) else list(loaders.iter_files(target))
 
     total = 0

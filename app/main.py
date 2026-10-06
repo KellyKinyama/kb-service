@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from . import chunking, config, loaders, rag
-from .store import VectorStore
+from .store_factory import make_store
 
 app = FastAPI(title="ZESCO Knowledge Base")
 
@@ -21,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-store = VectorStore(config.DATA_DIR, config.EMBED_MODEL)
+store = make_store()
 
 
 class IngestPath(BaseModel):
@@ -51,6 +51,7 @@ def health():
         "documents": store.count,
         "sources": store.sources(),
         "embed_model": config.EMBED_MODEL,
+        "vector_backend": config.VECTOR_BACKEND,
     }
 
 

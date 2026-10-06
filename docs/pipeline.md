@@ -74,6 +74,28 @@ flowchart LR
    `KB_DATA_DIR` (default `./kb_data`). Re-ingesting a source first removes its
    old chunks (`remove_source`) so updates stay clean.
 
+### Vector store backends
+
+The store is pluggable (`app/store_factory.py`, selected by `KB_VECTOR_BACKEND`):
+
+- **`numpy`** (default) — `app/store.py`: a single-node numpy cosine index
+  persisted to `vectors.npy` + `meta.json`. Zero external dependencies.
+- **`dartdb`** — `app/dartdb_store.py`: stores vectors in a running
+  [dart-db-server](https://github.com/KellyKinyama/dart-db-server) over its TCP
+  JSON-line protocol. Embeddings are still computed locally; the DB holds the
+  vectors in a `VECTOR(dim, kind=hnsw, metric=cosine)` column and runs k-NN via
+  its `vec_search` function. Gives an HNSW index, payload-filter pruning, and
+  optional hybrid BM25 — useful as the corpus grows. Start the server first:
+
+  ```powershell
+  cd dart-db-server
+  dart run bin/dart_db_server.dart --port 4555 --file kb_vectors.json
+  ```
+
+  Then set `KB_VECTOR_BACKEND=dartdb` (host/port via `KB_DARTDB_HOST` /
+  `KB_DARTDB_PORT`). Both backends expose the same interface, so ingest and
+  query code are unchanged.
+
 ## Query pipeline (RAG)
 
 1. **Embed the question** with the same model.
@@ -147,6 +169,9 @@ Set in `kb-service/.env` (see `app/config.py` for defaults):
 | `KB_CHUNK_OVERLAP`   | `150`                                           | Chunk overlap (chars)          |
 | `KB_TOP_K`           | `5`                                             | Passages retrieved per query   |
 | `KB_CORS_ORIGINS`    | `*`                                             | Allowed browser origins        |
+| `KB_VECTOR_BACKEND`  | `numpy`                                         | `numpy` or `dartdb`            |
+| `KB_DARTDB_HOST`     | `127.0.0.1`                                      | dart-db-server host            |
+| `KB_DARTDB_PORT`     | `4555`                                          | dart-db-server port            |
 
 ## Running locally
 
@@ -169,7 +194,8 @@ The frontend reads `VITE_API_BASE` (default `http://localhost:8080`).
 ## Notes & limitations
 
 - The vector store is a simple numpy cosine index — fine up to ~100k chunks on
-  one node. For larger corpora, swap in FAISS and add a reranker.
+  one node. For larger corpora, switch `KB_VECTOR_BACKEND=dartdb` for an HNSW
+  index with filter pruning and hybrid BM25.
 - The first embedding call downloads the ~80 MB model; afterwards it runs fully
   offline.
 - Answers are only as good as what has been ingested; if the KB lacks the

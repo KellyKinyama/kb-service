@@ -22,3 +22,10 @@ DATA_DIR = os.environ.get("KB_DATA_DIR", "./kb_data")
 CHUNK_SIZE = int(os.environ.get("KB_CHUNK_SIZE", "1000"))
 CHUNK_OVERLAP = int(os.environ.get("KB_CHUNK_OVERLAP", "150"))
 TOP_K = int(os.environ.get("KB_TOP_K", "5"))
+
+# Vector store backend: "numpy" (local file) or "dartdb" (dart-db-server).
+VECTOR_BACKEND = os.environ.get("KB_VECTOR_BACKEND", "numpy").lower()
+DARTDB_HOST = os.environ.get("KB_DARTDB_HOST", "127.0.0.1")
+DARTDB_PORT = int(os.environ.get("KB_DARTDB_PORT", "4555"))
+DARTDB_TABLE = os.environ.get("KB_DARTDB_TABLE", "chunks")
+DARTDB_INDEX_KIND = os.environ.get("KB_DARTDB_INDEX_KIND", "hnsw")
