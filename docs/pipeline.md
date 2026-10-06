@@ -96,6 +96,9 @@ The store is pluggable (`app/store_factory.py`, selected by `KB_VECTOR_BACKEND`)
   `KB_DARTDB_PORT`). Both backends expose the same interface, so ingest and
   query code are unchanged.
 
+See [vector-backends.md](vector-backends.md) for a full comparison, setup,
+operations, and index-selection guide.
+
 ## Query pipeline (RAG)
 
 1. **Embed the question** with the same model.
